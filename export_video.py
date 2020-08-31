@@ -40,46 +40,33 @@ def video_add_mp3(file_name, mp3_file, codecfunc, video_bitrate, audio_bitrate, 
     """
     report_name = report_name if '.' in report_name else report_name + '.mp4'
     try:
-        subprocess.call('ffmpeg -i ' + file_name
+        
+        subprocess.call('ffmpeg -i ' + file_name    #添加视频流
+                        + ' -i ' + mp3_file     #添加音频流
+                        + ' -y '    #默认覆盖已有文件
+                        + ' -strict -2'     #音频使用AAC编码
+                        + ' -vcodec ' + "\"" + codecfunc + "\""     #设置编码器
+                        + ' -b:v ' + "\"" + video_bitrate + "k\""   #设置视频码率
+                        + ' -b:a ' + "\""+ audio_bitrate + "k\""    #设置音频码率
+                        + ' -f mp4 '        #mp4格式输出
+                        + "\""+ report_name + "\"", shell=True)
+        '''
+        print('ffmpeg -i ' + file_name
                         + ' -i ' + mp3_file 
                         + ' -strict -2'
-                        + ' -vcodec ' + codecfunc
-                        + ' -b:v ' + video_bitrate
-                        + '-b:a ' + audio_bitrate
+                        + ' -vcodec ' + "\"" + codecfunc + "\""
+                        + ' -b:v ' + "\"" + video_bitrate + "\""
+                        + ' -b:a ' + "\""+ audio_bitrate + "\""
                         + ' -f mp4 '
-                        + "\""+ report_name + "\"", shell=True)
+                        + "\""+ report_name + "\"")
+        '''
         return True
     except:
         return False
 
-
-
-
-def create_video():
+def create_video(codecnum,video_bitrate,audio_bitrate):
     file_list = get_file_path()
     if file_list:
-        # CLI选择输出模式
-        print('选择使用的解编码器(不确定请使用libx264)\n'
-                    + '1 - libx264模式\n'
-                    + '2 - intel QSV模式\n'
-                    + '3 - NVIDIA nvenc模式\n'
-                    + '4 - AMD VCE模式\n')
-        codecnum = input('输入数字选择: ')
-        if codecnum == '1':
-            codecnum = 'libx264'
-        elif codecnum == '2':
-            codecnum = 'h264_qsv'
-        elif codecnum == '3':
-            codecnum = 'h264_nvenc'
-        elif codecnum == '4':
-            codecnum = 'h264_amf'
-        else:
-            print('输入错误，程序将以libx264模式运行')
-            codecnum = 'libx264'
-        print('\n输入转换后的视频码率(不懂请输入2500)\n')
-        video_bitrate = input('视频码率: ') + 'k'
-        print('\n输入转换后的音频码率(不懂请输入128)\n')
-        audio_bitrate = input('音频码率: ') + 'k'
         # 获取文件夹正确名称, 名称在上级目录的entry.json中
         for f in file_list:
             f_path = ''
@@ -95,6 +82,3 @@ def create_video():
             video_add_mp3(os.path.join(f, 'video.m4s'), os.path.join(f, 'audio.m4s'),
                           codecnum,video_bitrate,audio_bitrate,os.path.join(title, page_data + '.mp4'))
 
-
-if __name__ == '__main__':
-    create_video()
