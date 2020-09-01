@@ -2,6 +2,7 @@
 # -*- encoding:utf-8 -*-
 
 from export_video import create_video
+from sys import exit
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
@@ -72,12 +73,15 @@ def start_convert():
         abit.select_clear()
         messagebox.showinfo("Export Video from Blibili", "音频码率错误！")
     else:
-        convert.codecfun = codecfun
-        convert.video_bitrate = video_bitrate
-        convert.audio_bitrate = audio_bitrate
-        convert.start()
         global convert_started
-        convert_started = 1
+        if convert_started == 1 :
+            messagebox.showinfo('Export Video from Blibili','请勿重复点击')
+        else:
+            convert.codecfun = codecfun
+            convert.video_bitrate = video_bitrate
+            convert.audio_bitrate = audio_bitrate
+            convert.start()
+            convert_started = 1
 
 
 #转换按钮
@@ -99,7 +103,8 @@ def convert_done():
         if convert.isAlive() == False :
             convert_started = 0
             #convert = convert_thread('libx264', '2000', '128')
-            messagebox.showinfo('Export Video from Blibili','转换完成！')
+            if messagebox.showinfo('Export Video from Blibili','转换完成！') == 'ok' :
+                exit(0)
     window.after(500,convert_done)
 
 if __name__ == '__main__':
