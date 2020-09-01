@@ -5,7 +5,21 @@ from export_video import create_video
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
+import threading
 import webbrowser
+
+class convert_thread (threading.Thread):   #继承父类threading.Thread
+    def __init__(self, codecfun, video_bitrate, audio_bitrate):
+        threading.Thread.__init__(self)
+        self.codecfun = codecfun
+        self.video_bitrate = video_bitrate
+        self.audio_bitrate = audio_bitrate
+    def run(self):                   #把要执行的代码写到run函数里面 线程在创建后会直接运行run函数 
+        create_video(self.codecfun, self.video_bitrate, self.audio_bitrate)
+
+#转换开始标志位
+convert_started = 0
+convert = convert_thread('libx264', '2000', '128')
 
 #主窗口
 window = tk.Tk()
@@ -58,8 +72,13 @@ def start_convert():
         abit.select_clear()
         messagebox.showinfo("Export Video from Blibili", "音频码率错误！")
     else:
-        create_video(codecfun,video_bitrate,audio_bitrate)
-        messagebox.showinfo("Export Video from Blibili", "转换完成！")
+        convert.codecfun = codecfun
+        convert.video_bitrate = video_bitrate
+        convert.audio_bitrate = audio_bitrate
+        convert.start()
+        global convert_started
+        convert_started = 1
+
 
 #转换按钮
 btn = tk.Button(window,text='开始转换',command=start_convert)
@@ -73,5 +92,16 @@ def start_help():
 helpbtn = tk.Button(window,text='点此获取帮助',command=start_help)
 helpbtn.grid(row=5,column=4)
 
+#检测转换是否完成
+def convert_done():
+    global convert_started
+    if convert_started == 1:
+        if convert.isAlive() == False :
+            convert_started = 0
+            #convert = convert_thread('libx264', '2000', '128')
+            messagebox.showinfo('Export Video from Blibili','转换完成！')
+    window.after(500,convert_done)
+
 if __name__ == '__main__':
+    window.after(500,convert_done)
     window.mainloop()
