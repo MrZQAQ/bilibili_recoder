@@ -2,11 +2,11 @@
 "program": [
 {
 "name": "export_video_CLI.exe",
-"version": "V1.1.2"
+"version": "V1.1.3"
 },
 {
 "name": "export_video_GUI.exe",
-"version": "V1.1.2"
+"version": "V1.1.3"
 }
 ],
 "update_method": "github",
