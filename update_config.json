@@ -1,0 +1,19 @@
+{
+"program": [
+{
+"name": "export_video_CLI.exe",
+"version": "V1.1.2"
+},
+{
+"name": "export_video_GUI.exe",
+"version": "V1.1.2"
+}
+],
+"update_method": "github",
+"update_func": [
+{
+"name": "github",
+"api": "https://api.github.com/repos/MrZQAQ/bilibili_recoder/releases/latest"
+}
+]
+}
